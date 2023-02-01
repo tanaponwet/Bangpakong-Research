@@ -15,15 +15,15 @@ function MapBox() {
             <div className="header">
                 <div className="title-1">
                     <LocationOnRoundedIcon className='icon' sx={{ fontSize: 24 }} />
-                    <span className='text-1'>ตำแหน่งสถานี</span>
+                    <p className='text-1'>ตำแหน่งสถานี</p>
                 </div>
             </div>
             <div className="map-con">
                 <Map
-                    mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                    mapboxAccessToken="pk.eyJ1Ijoiam9lY2VrbWl0bCIsImEiOiJjbGRsdmVpMGEwMmk1NDFuMGFpdnV6NWl2In0.oyKImg2FLZ0ZemRrSWDhgA"
                     initialViewState={{
-                        longitude: 101.07091474417402,
-                        latitude: 13.5836200603384,
+                        longitude: 101.1933062372916,
+                        latitude: 13.761010528753618,
                         zoom: 15
                     }}
                     style={{
@@ -33,7 +33,7 @@ function MapBox() {
                     }}             
                     mapStyle="mapbox://styles/mapbox/streets-v12"
                 >
-                    <Marker longitude='101.07091474417402' latitude='13.5836200603384' color='red' />
+                    <Marker longitude='101.1933062372916' latitude='13.761010528753618' color='red' />
                     <NavigationControl position='bottom-right' />
                     <FullscreenControl position='bottom-right'/>
                     <GeolocateControl position='bottom-right'/>

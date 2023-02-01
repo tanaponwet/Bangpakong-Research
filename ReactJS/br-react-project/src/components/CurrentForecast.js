@@ -18,21 +18,21 @@ function CurrentForecast() {
             <div className="header">
                 <div className="title-1">
                     <HomeWorkRoundedIcon className='icon' sx={{ fontSize: 24 }} />
-                    <span className='text-1'>สถานีชลประทานฉะเชิงเทรา</span>
+                    <p className='text-1'>หน้าวัดคลองเขื่อน</p>
                 </div>
             </div>
             <div className="header">
                 <div className="title-2">
                     <LocationOnRoundedIcon className='icon' sx={{ fontSize: 24 }} />
-                    <p className='text-2'>ต.คลองบ้านโพธิ์ อ.บ้านโพธิ์ จ.ฉะเชิงเทรา</p>
+                    <p className='text-2'>ตำบล คลองเขื่อน อำเภอ คลองเขื่อน ฉะเชิงเทรา</p>
                 </div>
                 <div className="title-2">
                     <WaterRoundedIcon className='icon' sx={{ fontSize: 24 }} />
-                    <p className='text-2'>ระยะห่างจากทะเล 35 กม.</p>
+                    <p className='text-2'>ระยะห่างจากทะเล 86 กม.</p>
                 </div>
                 <div className="title-2">
                     <MapRoundedIcon className='icon' sx={{ fontSize: 24 }} />
-                    <a className='link-text' href="https://www.google.co.th/maps/place/13%C2%B035'00.3%22N+101%C2%B004'15.1%22E/@13.5834272,101.0686713,17z/data=!3m1!4b1!4m5!3m4!1s0x0:0x933e0bbbd1d32142!8m2!3d13.583422!4d101.07086?hl=th" target='_blank'>13.583422, 101.07086</a>
+                    <a className='link-text' href="https://goo.gl/maps/rhut5YAiXzS17DCw6" target='_blank'>13°45'39.3"N, 101°11'36.0"E</a>
                 </div>
             </div>
             <div className="info">
