@@ -13,16 +13,10 @@ import WatchLaterRoundedIcon from '@mui/icons-material/WatchLaterRounded';
 import { HourglassEmpty } from '@mui/icons-material';
 
 function CurrentForecast(props) {
-<<<<<<< Updated upstream
     const {data} = props; //same as -> const data = props.data;
     return (
         // <div>CurrentForecast</div>
         <main className="current-forecast">
-=======
-    return (
-        // <div>CurrentForecast</div>
-        <div className="current-forecast">
->>>>>>> Stashed changes
             
             <div className="header">
                 <div className="title-1">
@@ -52,13 +46,8 @@ function CurrentForecast(props) {
                             <p className='text-2'>ความเค็ม</p>
                         </div>
                         <div className="salinity-info">
-<<<<<<< Updated upstream
                             {/* <p className='salinity-value'>99.99</p> */}
                             <p className='salinity-value'>{data.gl}</p>
-=======
-                            <p className='salinity-value'>99.99</p>
-                            {/* <p className='salinity-value'>{data.gl}</p> */}
->>>>>>> Stashed changes
                             <p className='salinity-unit'>g/l</p>
                         </div>
                     </div>
@@ -68,13 +57,8 @@ function CurrentForecast(props) {
                             <p className='text-2'>ค่าการนำไฟฟ้า</p>
                         </div>
                         <div className="ec-info">
-<<<<<<< Updated upstream
                             {/* <p className='ec-value'>99999.99</p> */}
                             <p className='ec-value'>{data.uscm}</p>
-=======
-                            <p className='ec-value'>99999.99</p>
-                            {/* <p className='ec-value'>{data.uscm}</p> */}
->>>>>>> Stashed changes
                             <p className='ec-unit'>µS/cm</p>
                         </div>
                     </div>
@@ -88,14 +72,10 @@ function CurrentForecast(props) {
                 <div className="title-1">
                     <WatchLaterRoundedIcon className='icon' sx={{ fontSize: 24 }} />
                     {/* <p className='text-1'>ศ. 00/00/0000 00:00 GMT+07:00</p> */}
-<<<<<<< Updated upstream
                     <p className='text-1'>{data.date} {data.time} GMT+07:00</p>
-=======
-                    <p className='text-1'>ศ. 00/00/0000 00:00 GMT+07:00</p>
->>>>>>> Stashed changes
                 </div>
             </div>
-        </div>
+        </main>
     )
 }
 

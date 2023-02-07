@@ -24,11 +24,7 @@
 
 // export default App;
 
-<<<<<<< Updated upstream
 import React, { createContext, useEffect, useState } from 'react'
-=======
-import React, { createContext, useState, useEffect } from 'react'
->>>>>>> Stashed changes
 import './App.css';
 import NavigationBar from './components/NavigationBar';
 import CurrentForecast from './components/CurrentForecast';
@@ -40,8 +36,6 @@ import MapBox from './components/MapBox';
 export const ThemeContext = createContext(null)
 
 function App() {
-
-  const [hourly, passHourly] = useState([]);
 
   const [theme, setTheme] = useState('light');
   const [hourly, setHourly] = useState([]);
@@ -66,21 +60,6 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000", {
-      "methods":"GET",
-      headers: {
-        "Content-Type":"applications/json"
-      }
-    })
-    .then(resp => resp.json())
-    // .then(resp => console.log(resp))
-    .then(resp => passHourly(resp))
-    .catch(error => console.log(error))
-
-
-  },[])
-
   return (
     // <div>App</div>
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
@@ -88,16 +67,11 @@ function App() {
         <NavigationBar onToggleTheme={toggleTheme} />
         <div className="card-list">
           <div className="card-con">
-<<<<<<< Updated upstream
-            <CurrentForecast data ={hourly}/>
-=======
-            <CurrentForecast hourly = {hourly}/>
->>>>>>> Stashed changes
+            <CurrentForecast data = {hourly}/>
             <HourForecast />
             <MapBox />
           </div>
         </div>
-        {/* <NavigationBar onToggleTheme={toggleTheme} /> */}
         <Footer />
       </div>
     </ThemeContext.Provider>
