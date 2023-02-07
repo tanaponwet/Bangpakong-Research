@@ -22,24 +22,29 @@ function NavigationBar(props) {
     const closeMobileMenu = () => setClickState(false)
 
     return (
-        // <div>NavigationBar</div>
         <nav>
             <div className="nav-con">
                 <a className='logo-con' href="">
                     <figure className='logo-img'>
                         <img src={BlueSaltWater} alt="" />
                     </figure>
-                    <div className='logo-text'>
+                    <div className='logo-text' class="row">
                         <p>Salinity</p>
                         <p>Predictive</p>
                         <p>System</p>
+                        
                     </div>
                 </a>
                 <div className={clickState ? 'menu-con active' : 'menu-con'}>
+<<<<<<< Updated upstream
                     <a className="menu-link" href='' onClick={closeMobileMenu}>
+                        {/* <HomeRoundedIcon className='menu-icon' /> */}
+=======
+                    {/* <a className="menu-link" href='' onClick={closeMobileMenu}>
                         <HomeRoundedIcon className='menu-icon' />
+>>>>>>> Stashed changes
                         <p className='menu-text'>Home</p>
-                    </a>
+                    </a> */}
                     <div className="theme-con" onClick={switchTheme}>
                         {themeState ? (
                             <LightModeRoundedIcon className='icon' />
@@ -53,13 +58,13 @@ function NavigationBar(props) {
                         )}
                     </div>
                 </div>
-                <div className="mobile-menu" onClick={handleClick}>
+                {/* <div className="mobile-menu" onClick={handleClick}>
                     {clickState ? (
                         <CloseRoundedIcon className='icon' />
                     ) : (
                         <MenuRoundedIcon className='icon' />
                     )}
-                </div>
+                </div> */}
             </div>
         </nav>
     )
