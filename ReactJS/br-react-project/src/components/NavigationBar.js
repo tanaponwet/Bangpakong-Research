@@ -36,15 +36,10 @@ function NavigationBar(props) {
                     </div>
                 </a>
                 <div className={clickState ? 'menu-con active' : 'menu-con'}>
-<<<<<<< Updated upstream
                     <a className="menu-link" href='' onClick={closeMobileMenu}>
                         {/* <HomeRoundedIcon className='menu-icon' /> */}
-=======
-                    {/* <a className="menu-link" href='' onClick={closeMobileMenu}>
-                        <HomeRoundedIcon className='menu-icon' />
->>>>>>> Stashed changes
                         <p className='menu-text'>Home</p>
-                    </a> */}
+                    </a>
                     <div className="theme-con" onClick={switchTheme}>
                         {themeState ? (
                             <LightModeRoundedIcon className='icon' />
