@@ -10,6 +10,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 
 function MapBox() {
+    const longitude =  101.1933062372916;
+    const latitude = 13.761010528753618;
+
     return (
         <main className="map-box">
             <div className="header">
@@ -22,8 +25,8 @@ function MapBox() {
                 <Map
                     mapboxAccessToken="pk.eyJ1Ijoiam9lY2VrbWl0bCIsImEiOiJjbGRsdmVpMGEwMmk1NDFuMGFpdnV6NWl2In0.oyKImg2FLZ0ZemRrSWDhgA"
                     initialViewState={{
-                        longitude: 101.1933062372916,
-                        latitude: 13.761010528753618,
+                        longitude: longitude,
+                        latitude: latitude,
                         zoom: 15
                     }}
                     style={{
@@ -33,7 +36,7 @@ function MapBox() {
                     }}             
                     mapStyle="mapbox://styles/mapbox/streets-v12"
                 >
-                    <Marker longitude='101.1933062372916' latitude='13.761010528753618' color='red' />
+                    <Marker longitude= {longitude} latitude= {latitude} color='red' />
                     <NavigationControl position='bottom-right' />
                     <FullscreenControl position='bottom-right'/>
                     <GeolocateControl position='bottom-right'/>
