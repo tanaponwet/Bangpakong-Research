@@ -53,13 +53,13 @@ function NavigationBar(props) {
                         )}
                     </div>
                 </div>
-                {/* <div className="mobile-menu" onClick={handleClick}>
+                <div className="mobile-menu" onClick={handleClick}>
                     {clickState ? (
                         <CloseRoundedIcon className='icon' />
                     ) : (
                         <MenuRoundedIcon className='icon' />
                     )}
-                </div> */}
+                </div>
             </div>
         </nav>
     )

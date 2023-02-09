@@ -165,7 +165,7 @@ nav .mobile-menu {
         align-items: flex-start;
         position: absolute;
         top: 81px;
-        left: 0;
+        left: -100%;
         opacity: 0;
         transition: 0.5s ease;
         padding: 0 16px;
