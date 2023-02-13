@@ -1,29 +1,3 @@
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-
 import React, { createContext, useEffect, useState } from 'react'
 import './App.css';
 import NavigationBar from './components/NavigationBar';
@@ -32,25 +6,46 @@ import HourForecast from './components/HourForecast';
 import HourForecastCard from './components/HourForecastCard';
 import Footer from './components/Footer';
 import MapBox from './components/MapBox';
+import axios from 'axios';
+import socketIOClient from "socket.io-client";
 
 export const ThemeContext = createContext(null)
+
+
+
 
 function App() {
 
   const [theme, setTheme] = useState('light');
-  const [hourly, setHourly] = useState([]);
+
+  const [data, setData] = useState({ current: {} });
+
+  const socket = socketIOClient("http://127.0.0.1:5000/hourly");
+
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000", {
-      "methods":"GET",
+    fetch("http://127.0.0.1:5000/first_enter", {
       headers: {
-        "Content-Type":"applications/json"
+        "Content-Type": "application/json",
       }
     })
-    .then(resp => resp.json())
-    .then(resp => setHourly(resp))
-    .catch(error => console.log(error))
-  })
+    .then(response => response.json())
+    .then(data => setData(data.report))
+  }, []);
+
+
+  useEffect(() => {
+    socket.on("post_hourly", (data) => {
+      
+      const parsedData = JSON.parse(data);
+      // console.log("Hourly Data:", parsedData);
+      setData(parsedData.report);
+    });
+    return () => {
+      socket.off("post_hourly");
+    };
+  });
+
 
   const toggleTheme = (state) => {
     if (state === true) {
@@ -67,7 +62,7 @@ function App() {
         <NavigationBar onToggleTheme={toggleTheme} />
         <div className="card-list">
           <div className="card-con">
-            <CurrentForecast data = {hourly}/>
+            <CurrentForecast data={data.current} />
             <HourForecast />
             <MapBox />
           </div>

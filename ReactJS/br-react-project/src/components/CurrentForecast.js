@@ -14,6 +14,7 @@ import { HourglassEmpty } from '@mui/icons-material';
 
 function CurrentForecast(props) {
     const {data} = props; //same as -> const data = props.data;
+    // console.log("Data in CurrentForecast:", data);
     return (
         // <div>CurrentForecast</div>
         <main className="current-forecast">
