@@ -6,8 +6,8 @@ import HourForecast from './components/HourForecast';
 import HourForecastCard from './components/HourForecastCard';
 import Footer from './components/Footer';
 import MapBox from './components/MapBox';
-import axios from 'axios';
 import socketIOClient from "socket.io-client";
+// import Graph from "./components/Graph";
 
 export const ThemeContext = createContext(null)
 
@@ -24,22 +24,22 @@ function App() {
 
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/first_enter", {
+    fetch("http://127.0.0.1:5000/", {
       headers: {
         "Content-Type": "application/json",
       }
     })
     .then(response => response.json())
-    .then(data => setData(data.report))
+    .then(data => setData(data))
   }, []);
 
 
   useEffect(() => {
     socket.on("post_hourly", (data) => {
-      
-      const parsedData = JSON.parse(data);
+      setData(JSON.parse(data));
+      // const parsedData = JSON.parse(data);
       // console.log("Hourly Data:", parsedData);
-      setData(parsedData.report);
+      // setData(parsedData);
     });
     return () => {
       socket.off("post_hourly");
@@ -64,6 +64,7 @@ function App() {
           <div className="card-con">
             <CurrentForecast data={data.current} />
             <HourForecast />
+            {/* <Graph /> */}
             <MapBox />
           </div>
         </div>
