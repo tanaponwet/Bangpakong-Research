@@ -67,7 +67,10 @@ void loop() {
   WriteText(payloadPrintln);
   Serial.println(payloadPrintln);
   Serial.println("");
-  delay(7812);
+  for(int count = 0; count < 57 ; count++){
+    delay(1000);
+  }
+  delay(120);
 }
 
 
