@@ -3,18 +3,25 @@ import numpy as np
 import pandas as pd
 
 #%%
-df_read = pd.read_csv('data/corrected_data.csv')
+from matplotlib import rcParams
+rcParams['font.family'] = 'Angsana New'
+rcParams.update({'font.size': 18})
+rcParams['axes.unicode_minus'] = False
+#%%
+# df_read = pd.read_csv('data/corrected_data.csv')
+df_read = pd.read_csv('data/chol-bangkla-corrected-2017-2022-hourly-corrected.csv', parse_dates=["datetime"])
 
 #%%
 df = df_read.copy()
 print(df.dtypes)
 
 #%%
-df['date'] = pd.to_datetime(df['date'])
+# df['date'] = pd.to_datetime(df['date'])
+df['date'] = pd.to_datetime(df['datetime'])
 print(df.dtypes)
 
 #%%
-df = df.sort_values(by=['date'])
+df = df.sort_values(by=['datetime'])
 
 #%%
 df = df.set_index(pd.DatetimeIndex(df['date'])).drop(['date'], axis=1)
@@ -24,47 +31,43 @@ import matplotlib.pyplot as plt
 
 plt.figure(figsize=(16,32))
 plt.subplot(3,1,1)
-plt.title('Displays EC values from March to September.')
+plt.title('Displays EC values from 2016 to 2022.')
 plt.xlabel('Date')
 plt.ylabel('EC')
 plt.plot(df['ec'], label='OG ec')
-plt.plot(df['ec_new_1'], label='ec_new_1')
-plt.plot(df['ec_new_2'], label='ec_new_2')
-plt.plot(df['ec_new_3'], label='ec_new_3')
-plt.plot(df['ec_new_4'], label='ec_new_4')
-plt.plot(df['ec_new_.5'], label='ec_new_.5')
+plt.plot(df['ec_corrected'], label='corrected')
 plt.legend()
 
-plt.subplot(3,1,2)
-plt.title('Displays Temp. values from March to September.')
-plt.xlabel('Date')
-plt.ylabel('°C')
-plt.plot(df['temperature'], label='OG temp.')
-plt.plot(df['temp_new_1'], label='temp_new_1')
-plt.plot(df['temp_new_2'], label='temp_new_2')
-plt.plot(df['temp_new_3'], label='temp_new_3')
-plt.plot(df['temp_new_4'], label='temp_new_4')
-plt.plot(df['temp_new_.5'], label='temp_new_.5')
-plt.legend()
+# plt.subplot(3,1,2)
+# plt.title('Displays Temp. values from March to September.')
+# plt.xlabel('Date')
+# plt.ylabel('°C')
+# plt.plot(df['temperature'], label='OG temp.')
+# plt.plot(df['temp_new_1'], label='temp_new_1')
+# plt.plot(df['temp_new_2'], label='temp_new_2')
+# plt.plot(df['temp_new_3'], label='temp_new_3')
+# plt.plot(df['temp_new_4'], label='temp_new_4')
+# plt.plot(df['temp_new_.5'], label='temp_new_.5')
+# plt.legend()
 
-plt.subplot(3,1,3)
-plt.title('Displays pH. values from March to September.')
-plt.xlabel('Date')
-plt.ylabel('pH')
-plt.plot(df['pH'], label='OG pH')
-plt.plot(df['pH_new_1'], label='pH_new_1')
-plt.plot(df['pH_new_2'], label='pH_new_2')
-plt.plot(df['pH_new_3'], label='pH_new_3')
-plt.plot(df['pH_new_4'], label='pH_new_4')
-plt.plot(df['pH_new_.5'], label='pH_new_.5')
-plt.legend()
+# plt.subplot(3,1,3)
+# plt.title('Displays pH. values from March to September.')
+# plt.xlabel('Date')
+# plt.ylabel('pH')
+# plt.plot(df['pH'], label='OG pH')
+# plt.plot(df['pH_new_1'], label='pH_new_1')
+# plt.plot(df['pH_new_2'], label='pH_new_2')
+# plt.plot(df['pH_new_3'], label='pH_new_3')
+# plt.plot(df['pH_new_4'], label='pH_new_4')
+# plt.plot(df['pH_new_.5'], label='pH_new_.5')
+# plt.legend()
 
 #%%
 # =============================================================================
 # กำหนดตัวแปรที่ต้องการใช้ train ตัว model
 # =============================================================================
 
-data = df.filter(['ec_new_.5'])
+data = df.filter(['ec_corrected'])
 dataset = data.values
 
 #%%
@@ -75,9 +78,9 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 # StandardScaler
 # =============================================================================
 
-scaler = StandardScaler()
-scaler = scaler.fit(dataset)
-dataset_scaled = scaler.transform(dataset)
+# scaler = StandardScaler()
+# scaler = scaler.fit(dataset)
+# dataset_scaled = scaler.transform(dataset)
 
 # dataset_scaled = scaler.fit_transform(dataset)
 
@@ -86,11 +89,11 @@ dataset_scaled = scaler.transform(dataset)
 # MinMaxScaler
 # =============================================================================
 
-# scaler = MinMaxScaler(feature_range=(0,1))
-# scaler = scaler.fit(dataset)
-# dataset_scaled = scaler.transform(dataset)
+scaler = MinMaxScaler(feature_range=(0,1))
+scaler = scaler.fit(dataset)
+dataset_scaled = scaler.transform(dataset)
 
-# dataset_scaled = scaler.fit_transform(dataset)
+dataset_scaled = scaler.fit_transform(dataset)
 
 #%%
 # =============================================================================
@@ -100,14 +103,20 @@ dataset_scaled = scaler.transform(dataset)
 # dataset_scaled = dataset
 
 #%%
-n_future = 1
-n_past = 72
+n_future = 24
+n_past = 48
 
 #%%
-import math
+# import math
 
-train_set_len = math.ceil(len(dataset) * 0.80)
-valid_set_len = math.ceil(len(dataset) * 0.10)
+# train_set_len = math.ceil(len(dataset) * 0.80)
+# valid_set_len = math.ceil(len(dataset) * 0.10)
+
+# first 3yrs
+train_set_len = 26280
+
+# last year
+valid_set_len = 17544
 
 #%%
 # =============================================================================
@@ -115,7 +124,9 @@ valid_set_len = math.ceil(len(dataset) * 0.10)
 # =============================================================================
 
 #%%
-train_set = dataset_scaled[0:train_set_len, :]
+# train_set = dataset_scaled[0:train_set_len, :]
+train_set = dataset_scaled[0:train_set_len -1, :]
+
 
 x_train = []
 y_train = []
@@ -169,9 +180,9 @@ plt.figure(figsize=(16,8))
 plt.title('Displays Train set, Validation set, and Test set.')
 plt.xlabel('Date')
 plt.ylabel('EC')
-plt.plot(df[0:train_set_len]['ec_new_.5'], label='Train')
-plt.plot(df[train_set_len - n_past:train_set_len + valid_set_len]['ec_new_.5'], label='Validation')
-plt.plot(df[(train_set_len + valid_set_len) - n_past:]['ec_new_.5'], label='Test')
+plt.plot(df[0:train_set_len]["ec_corrected"], label='Train')
+plt.plot(df[train_set_len - n_past:train_set_len + valid_set_len]["ec_corrected"], label='Validation')
+plt.plot(df[(train_set_len + valid_set_len) - n_past:]["ec_corrected"], label='Test')
 plt.legend()
 plt.show()
 
@@ -200,7 +211,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 # model = Sequential()
-# model.add(SimpleRNN(64, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
+# model.add(SimpleRNN(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
 # model.add(SimpleRNN(64, return_sequences=False))
 # model.add(Dense(16))
 # model.add(Dense(1))
@@ -210,22 +221,22 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # LSTM
 # =============================================================================
 
-model = Sequential()
-model.add(LSTM(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
-model.add(LSTM(64, return_sequences=False))
-model.add(Dense(16))
-model.add(Dense(1))
+# model = Sequential()
+# model.add(LSTM(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
+# model.add(LSTM(64, return_sequences=False))
+# model.add(Dense(16))
+# model.add(Dense(1))
 
 #%%
 # =============================================================================
 # Bidirectional LSTM
 # =============================================================================
 
-# model = Sequential()
-# model.add(Bidirectional(LSTM(64, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
-# model.add(Bidirectional(LSTM(64, return_sequences=False)))
-# model.add(Dense(16))
-# model.add(Dense(1))
+model = Sequential()
+model.add(Bidirectional(LSTM(128, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
+model.add(Bidirectional(LSTM(64, return_sequences=False)))
+model.add(Dense(16))
+model.add(Dense(1))
 
 #%%
 model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse'])
@@ -235,7 +246,7 @@ model.summary()
 early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
 
 #%%
-checkpoint_filepath = 'checkpoint/my_model.h5'
+checkpoint_filepath = 'checkpoint/01-bilstm-3-2-1.h5'
 model_checkpoint_callback = ModelCheckpoint(
     filepath=checkpoint_filepath,
     monitor='val_loss',
@@ -257,7 +268,7 @@ model_fit = model.fit(
 
 #%%
 plt.figure(figsize=(16,8))
-plt.title('Show loss rate.')
+plt.title('Bi-LSTM Show loss rate 0-1 scale train-val-test:3-2-1')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.plot(model_fit.history['loss'], label='Training loss')
@@ -268,7 +279,7 @@ plt.show()
 #%%
 from keras.models import load_model
 
-model = load_model('checkpoint/my_model.h5')
+model = load_model('checkpoint/01-bilstm-3-2-1.h5')
 
 #%%
 pred = model.predict(x_test)
@@ -299,13 +310,14 @@ print(f'RMSPE = {rmspe}')
 
 #%%
 plt.figure(figsize=(16,8))
+plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
 plt.plot(y_test, label='y_test')
 plt.plot(y_pred, label='y_pred')
 plt.legend()
 plt.show()
 
 #%%
-df_compare = pd.DataFrame({'Actual EC':df['ec_new_.5'][train_set_len + valid_set_len:]})
+df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:]})
 df_compare['Predicted EC'] = y_pred
 
 #%%
