@@ -1,6 +1,7 @@
 #%%
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 #%%
 from matplotlib import rcParams
@@ -27,7 +28,6 @@ df = df.sort_values(by=['datetime'])
 df = df.set_index(pd.DatetimeIndex(df['date'])).drop(['date'], axis=1)
 
 #%%
-import matplotlib.pyplot as plt
 
 plt.figure(figsize=(16,32))
 plt.subplot(3,1,1)
@@ -211,7 +211,13 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 # model = Sequential()
+# model.add(SimpleRNN(192, return_sequences=True, input_shape=(n_past,1)))
+# model.add(SimpleRNN(96, return_sequences=True))
+# model.add(SimpleRNN(48, return_sequences=False))
+# model.add(Dense(n_future))
+
 # model.add(SimpleRNN(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
+# model.add(SimpleRNN(64, return_sequences=True))
 # model.add(SimpleRNN(64, return_sequences=False))
 # model.add(Dense(16))
 # model.add(Dense(1))
@@ -222,8 +228,15 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 # model = Sequential()
+# model.add(LSTM(192, return_sequences=True, input_shape=(n_past,1)))
+# model.add(LSTM(96, return_sequences=True))
+# model.add(LSTM(48, return_sequences=False))
+# model.add(Dense(n_future))
+
+# model = Sequential()
 # model.add(LSTM(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
 # model.add(LSTM(64, return_sequences=False))
+# model.add(Dense(n_future))
 # model.add(Dense(16))
 # model.add(Dense(1))
 
@@ -233,10 +246,13 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 model = Sequential()
-model.add(Bidirectional(LSTM(128, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
-model.add(Bidirectional(LSTM(64, return_sequences=False)))
-model.add(Dense(16))
-model.add(Dense(1))
+model.add(Bidirectional(LSTM(192, return_sequences=True), input_shape=(n_past,1)))
+model.add(Bidirectional(LSTM(96, return_sequences=True)))
+model.add(Bidirectional(LSTM(48, return_sequences=False)))
+model.add(Dense(n_future))
+
+# model.add(Dense(16))
+# model.add(Dense(1))
 
 #%%
 model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse'])
@@ -246,7 +262,7 @@ model.summary()
 early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
 
 #%%
-checkpoint_filepath = 'checkpoint/01-bilstm-3-2-1.h5'
+checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1.h5'
 model_checkpoint_callback = ModelCheckpoint(
     filepath=checkpoint_filepath,
     monitor='val_loss',
@@ -260,7 +276,7 @@ model_checkpoint_callback = ModelCheckpoint(
 model_fit = model.fit(
     x_train,
     y_train,
-    batch_size=16,
+    batch_size=24,
     epochs=128,
     validation_data=(x_valid, y_valid),
     callbacks=[model_checkpoint_callback, early_stopping_callback]
@@ -268,7 +284,7 @@ model_fit = model.fit(
 
 #%%
 plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM Show loss rate 0-1 scale train-val-test:3-2-1')
+plt.title('Bi-LSTM: loss rate 0-1 scale 24-output train-val-test:3-2-1')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.plot(model_fit.history['loss'], label='Training loss')
@@ -279,7 +295,7 @@ plt.show()
 #%%
 from keras.models import load_model
 
-model = load_model('checkpoint/01-bilstm-3-2-1.h5')
+model = load_model('checkpoint/01-bilstm-24-3-2-1.h5')
 
 #%%
 pred = model.predict(x_test)
@@ -298,7 +314,7 @@ y_pred = np.reshape(y_pred, (y_pred.shape[0], 1))
 from sklearn.metrics import mean_squared_error
 
 rmse = mean_squared_error(y_test, y_pred, squared=False)
-print(f'RMSE = {rmse}')            
+print(f'RMSE of Bi-LSTM = {rmse}')            
 
 #%%
 # rmse = np.sqrt(np.mean(np.square((y_test - y_pred))))
@@ -306,8 +322,14 @@ print(f'RMSE = {rmse}')
 
 #%%
 rmspe = (np.sqrt(np.mean(np.square((y_test - y_pred) / y_test)))) * 100
-print(f'RMSPE = {rmspe}')
+print(f'RMSPE of Bi-LSTM = {rmspe}')
 
+#%%
+from sklearn.metrics import mean_absolute_percentage_error
+
+# calculate MAPE
+mape = mean_absolute_percentage_error(y_test, y_pred)
+print(f'MAPE of Bi-LSTM = {mape}')
 #%%
 plt.figure(figsize=(16,8))
 plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
