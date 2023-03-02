@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #%%
 from matplotlib import rcParams
 rcParams['font.family'] = 'Angsana New'
-rcParams.update({'font.size': 18})
+rcParams.update({'font.size': 22})
 rcParams['axes.unicode_minus'] = False
 #%%
 # df_read = pd.read_csv('data/corrected_data.csv')
@@ -259,7 +259,7 @@ model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse'])
 model.summary()
 
 #%%
-early_stopping_callback = EarlyStopping(monitor='val_loss', patience=10)
+early_stopping_callback = EarlyStopping(monitor='val_loss', patience=20)
 
 #%%
 checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1.h5'
@@ -284,7 +284,7 @@ model_fit = model.fit(
 
 #%%
 plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM: loss rate 0-1 scale 24-output train-val-test:3-2-1')
+plt.title('Bi-LSTM: loss rate 0-1 scale 24-output train-val-test: 3-2-1')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.plot(model_fit.history['loss'], label='Training loss')
