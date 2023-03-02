@@ -176,6 +176,72 @@ for i in range(n_past, len(test_set) - n_future + 1):
 x_test, y_test = np.array(x_test), np.array(y_test)
 
 #%%
+# =============================================================================
+# window sliding for multiple outputs (testing!!!)
+# =============================================================================
+
+#%%
+# =============================================================================
+# Train set (multiple outputs)
+# =============================================================================
+
+#%%
+train_set = scaled_dataset[0:train_set_len, :]
+
+x_train = []
+y_train = []
+
+for i in range(n_past, len(train_set) - n_future + 1):
+    x_train.append(train_set[i - n_past:i, 0:dataset.shape[1]])
+    # y_train.append(train_set[i + n_future - 1:i + n_future, 0])
+    y_train.append(train_set[i:i + n_future, 0])
+
+#%%
+x_train, y_train = np.array(x_train), np.array(y_train)
+
+y_train = np.reshape(y_train, (y_train.shape[0], y_train.shape[1], 1))
+
+#%%
+# =============================================================================
+# Validation set (multiple outputs)
+# =============================================================================
+
+#%%
+valid_set = scaled_dataset[train_set_len - n_past:train_set_len + valid_set_len, :]
+
+x_valid = []
+y_valid = []
+
+for i in range(n_past, len(valid_set) - n_future + 1):
+    x_valid.append(valid_set[i - n_past:i, 0:dataset.shape[1]])
+    # y_valid.append(valid_set[i + n_future - 1:i + n_future, 0])
+    y_valid.append(valid_set[i:i + n_future, 0])
+
+#%%
+x_valid, y_valid = np.array(x_valid), np.array(y_valid)
+y_valid = np.reshape(y_valid, (y_valid.shape[0], y_valid.shape[1], 1))
+
+#%%
+# =============================================================================
+# Test set (multiple outputs)
+# =============================================================================    
+
+#%%
+test_set = scaled_dataset[(train_set_len + valid_set_len) - n_past:, :]
+test_real = dataset[(train_set_len + valid_set_len) - n_past:, :]
+
+x_test = []
+y_test = []
+
+for i in range(n_past, len(test_set) - n_future + 1):
+    x_test.append(test_set[i - n_past:i, 0:dataset.shape[1]])
+    y_test.append(test_real[i:i + n_future, 0])
+
+#%%
+x_test, y_test = np.array(x_test), np.array(y_test)
+y_test = np.reshape(y_test, (y_test.shape[0], y_test.shape[1], 1))
+
+#%%
 plt.figure(figsize=(16,8))
 plt.title('Displays Train set, Validation set, and Test set.')
 plt.xlabel('Date')
@@ -361,6 +427,47 @@ plt.plot( df['ec_new_.5'], label='All Actual EC')
 plt.plot(df_compare['Predicted EC'], label='Predicted')
 plt.legend()
 plt.show()
+
+#%%
+# =============================================================================
+# multiple outputs (testing!!!)
+# =============================================================================
+
+#%%
+from keras.models import load_model
+
+model = load_model('checkpoint/01-bilstm-24-3-2-1.h5')
+
+#%%
+pred = model.predict(x_test)
+
+#%%
+rpred = None
+
+#%%
+for i in range(pred.shape[1]):
+    tpred = pred[:,i]
+    tpred = np.reshape(tpred, (tpred.shape[0], 1))
+    tpred = np.repeat(tpred, dataset.shape[1], axis=-1)
+    tpred = scaler.inverse_transform(tpred)[:,0]
+    tpred = np.reshape(tpred, (tpred.shape[0], 1))
+    if rpred is None:
+        rpred = tpred
+    else:
+        rpred = np.append(rpred, tpred, axis=1)
+
+#%%
+y_pred = rpred[:,0]
+y_pred = np.reshape(y_pred, (y_pred.shape[0], 1))
+
+#%%
+y_test = np.reshape(y_test, (y_test.shape[0], y_test.shape[1]))
+
+#%%
+from sklearn.metrics import mean_squared_error
+
+rmse = mean_squared_error(y_test, rpred, squared=False)
+print(rmse)            
 
 #%%
 # =============================================================================
