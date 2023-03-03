@@ -93,7 +93,7 @@ scaler = MinMaxScaler(feature_range=(0,1))
 scaler = scaler.fit(dataset)
 dataset_scaled = scaler.transform(dataset)
 
-dataset_scaled = scaler.fit_transform(dataset)
+# dataset_scaled = scaler.fit_transform(dataset)
 
 #%%
 # =============================================================================
@@ -104,7 +104,7 @@ dataset_scaled = scaler.fit_transform(dataset)
 
 #%%
 n_future = 24
-n_past = 48
+n_past = 72
 
 #%%
 # import math
@@ -125,22 +125,83 @@ valid_set_len = 17544
 
 #%%
 # train_set = dataset_scaled[0:train_set_len, :]
-train_set = dataset_scaled[0:train_set_len -1, :]
+# train_set = dataset_scaled[0:train_set_len, :]
 
+
+# x_train = []
+# y_train = []
+
+# for i in range(n_past, len(train_set) - n_future + 1):
+#     x_train.append(train_set[i - n_past:i, 0:dataset.shape[1]])
+#     y_train.append(train_set[i + n_future - 1:i + n_future, 0])
+
+#%%
+# x_train, y_train = np.array(x_train), np.array(y_train)
+
+#%%
+# =============================================================================
+# Validation set
+# =============================================================================
+
+#%%
+# valid_set = dataset_scaled[train_set_len - n_past:train_set_len + valid_set_len, :]
+
+# x_valid = []
+# y_valid = []
+
+# for i in range(n_past, len(valid_set) - n_future + 1):
+#     x_valid.append(valid_set[i - n_past:i, 0:dataset.shape[1]])
+#     y_valid.append(valid_set[i + n_future - 1:i + n_future, 0])
+
+#%%
+# x_valid, y_valid = np.array(x_valid), np.array(y_valid)
+
+#%%
+# =============================================================================
+# Test set
+# =============================================================================    
+
+#%%
+# test_set = dataset_scaled[(train_set_len + valid_set_len) - n_past:, :]
+# test_real = dataset[(train_set_len + valid_set_len) - n_past:, :]
+
+# x_test = []
+# y_test = []
+
+# for i in range(n_past, len(test_set) - n_future + 1):
+#     x_test.append(test_set[i - n_past:i, 0:dataset.shape[1]])
+#     y_test.append(test_real[i + n_future - 1:i + n_future, 0])
+
+#%%
+# x_test, y_test = np.array(x_test), np.array(y_test)
+
+#%%
+# =============================================================================
+# window slicing for multiple outputs (testing!!!)
+# =============================================================================
+
+#%%
+# =============================================================================
+# Train set (multiple outputs)
+# =============================================================================
+
+#%%
+train_set = dataset_scaled[0:train_set_len, :]
 
 x_train = []
 y_train = []
 
 for i in range(n_past, len(train_set) - n_future + 1):
     x_train.append(train_set[i - n_past:i, 0:dataset.shape[1]])
-    y_train.append(train_set[i + n_future - 1:i + n_future, 0])
+    y_train.append(train_set[i:i + n_future, 0])
 
 #%%
 x_train, y_train = np.array(x_train), np.array(y_train)
+y_train = np.reshape(y_train, (y_train.shape[0], y_train.shape[1], 1))
 
 #%%
 # =============================================================================
-# Validation set
+# Validation set (multiple outputs)
 # =============================================================================
 
 #%%
@@ -151,70 +212,6 @@ y_valid = []
 
 for i in range(n_past, len(valid_set) - n_future + 1):
     x_valid.append(valid_set[i - n_past:i, 0:dataset.shape[1]])
-    y_valid.append(valid_set[i + n_future - 1:i + n_future, 0])
-
-#%%
-x_valid, y_valid = np.array(x_valid), np.array(y_valid)
-
-#%%
-# =============================================================================
-# Test set
-# =============================================================================    
-
-#%%
-test_set = dataset_scaled[(train_set_len + valid_set_len) - n_past:, :]
-test_real = dataset[(train_set_len + valid_set_len) - n_past:, :]
-
-x_test = []
-y_test = []
-
-for i in range(n_past, len(test_set) - n_future + 1):
-    x_test.append(test_set[i - n_past:i, 0:dataset.shape[1]])
-    y_test.append(test_real[i + n_future - 1:i + n_future, 0])
-
-#%%
-x_test, y_test = np.array(x_test), np.array(y_test)
-
-#%%
-# =============================================================================
-# window sliding for multiple outputs (testing!!!)
-# =============================================================================
-
-#%%
-# =============================================================================
-# Train set (multiple outputs)
-# =============================================================================
-
-#%%
-train_set = scaled_dataset[0:train_set_len, :]
-
-x_train = []
-y_train = []
-
-for i in range(n_past, len(train_set) - n_future + 1):
-    x_train.append(train_set[i - n_past:i, 0:dataset.shape[1]])
-    # y_train.append(train_set[i + n_future - 1:i + n_future, 0])
-    y_train.append(train_set[i:i + n_future, 0])
-
-#%%
-x_train, y_train = np.array(x_train), np.array(y_train)
-
-y_train = np.reshape(y_train, (y_train.shape[0], y_train.shape[1], 1))
-
-#%%
-# =============================================================================
-# Validation set (multiple outputs)
-# =============================================================================
-
-#%%
-valid_set = scaled_dataset[train_set_len - n_past:train_set_len + valid_set_len, :]
-
-x_valid = []
-y_valid = []
-
-for i in range(n_past, len(valid_set) - n_future + 1):
-    x_valid.append(valid_set[i - n_past:i, 0:dataset.shape[1]])
-    # y_valid.append(valid_set[i + n_future - 1:i + n_future, 0])
     y_valid.append(valid_set[i:i + n_future, 0])
 
 #%%
@@ -227,7 +224,7 @@ y_valid = np.reshape(y_valid, (y_valid.shape[0], y_valid.shape[1], 1))
 # =============================================================================    
 
 #%%
-test_set = scaled_dataset[(train_set_len + valid_set_len) - n_past:, :]
+test_set = dataset_scaled[(train_set_len + valid_set_len) - n_past:, :]
 test_real = dataset[(train_set_len + valid_set_len) - n_past:, :]
 
 x_test = []
@@ -312,7 +309,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 model = Sequential()
-model.add(Bidirectional(LSTM(192, return_sequences=True), input_shape=(n_past,1)))
+model.add(Bidirectional(LSTM(192, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
 model.add(Bidirectional(LSTM(96, return_sequences=True)))
 model.add(Bidirectional(LSTM(48, return_sequences=False)))
 model.add(Dense(n_future))
@@ -325,10 +322,10 @@ model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse'])
 model.summary()
 
 #%%
-early_stopping_callback = EarlyStopping(monitor='val_loss', patience=20)
+early_stopping_callback = EarlyStopping(monitor='val_loss', patience=5)
 
 #%%
-checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1.h5'
+checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1-test.h5'
 model_checkpoint_callback = ModelCheckpoint(
     filepath=checkpoint_filepath,
     monitor='val_loss',
@@ -358,75 +355,75 @@ plt.plot(model_fit.history['val_loss'], label='Validation loss')
 plt.legend()
 plt.show()
 
-#%%
-from keras.models import load_model
+# #%%
+# from keras.models import load_model
 
-model = load_model('checkpoint/01-bilstm-24-3-2-1.h5')
+# model = load_model('checkpoint/01-bilstm-24-3-2-1.h5')
 
-#%%
-pred = model.predict(x_test)
+# #%%
+# pred = model.predict(x_test)
 
-#%%
-if dataset.shape[1] > 1:
-    pred = np.repeat(pred, dataset.shape[1], axis=-1)
+# #%%
+# if dataset.shape[1] > 1:
+#     pred = np.repeat(pred, dataset.shape[1], axis=-1)
 
-#%%
-y_pred = scaler.inverse_transform(pred)[:,0]
+# #%%
+# y_pred = scaler.inverse_transform(pred)[:,0]
 
-#%%
-y_pred = np.reshape(y_pred, (y_pred.shape[0], 1))
+# #%%
+# y_pred = np.reshape(y_pred, (y_pred.shape[0], 1))
 
-#%%
-from sklearn.metrics import mean_squared_error
+# #%%
+# from sklearn.metrics import mean_squared_error
 
-rmse = mean_squared_error(y_test, y_pred, squared=False)
-print(f'RMSE of Bi-LSTM = {rmse}')            
+# rmse = mean_squared_error(y_test, y_pred, squared=False)
+# print(f'RMSE of Bi-LSTM = {rmse}')            
 
-#%%
-# rmse = np.sqrt(np.mean(np.square((y_test - y_pred))))
-# print(rmse)
+# #%%
+# # rmse = np.sqrt(np.mean(np.square((y_test - y_pred))))
+# # print(rmse)
 
-#%%
-rmspe = (np.sqrt(np.mean(np.square((y_test - y_pred) / y_test)))) * 100
-print(f'RMSPE of Bi-LSTM = {rmspe}')
+# #%%
+# rmspe = (np.sqrt(np.mean(np.square((y_test - y_pred) / y_test)))) * 100
+# print(f'RMSPE of Bi-LSTM = {rmspe}')
 
-#%%
-from sklearn.metrics import mean_absolute_percentage_error
+# #%%
+# from sklearn.metrics import mean_absolute_percentage_error
 
-# calculate MAPE
-mape = mean_absolute_percentage_error(y_test, y_pred)
-print(f'MAPE of Bi-LSTM = {mape}')
-#%%
-plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
-plt.plot(y_test, label='y_test')
-plt.plot(y_pred, label='y_pred')
-plt.legend()
-plt.show()
+# # calculate MAPE
+# mape = mean_absolute_percentage_error(y_test, y_pred)
+# print(f'MAPE of Bi-LSTM = {mape}')
+# #%%
+# plt.figure(figsize=(16,8))
+# plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
+# plt.plot(y_test, label='y_test')
+# plt.plot(y_pred, label='y_pred')
+# plt.legend()
+# plt.show()
 
-#%%
-df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:]})
-df_compare['Predicted EC'] = y_pred
+# #%%
+# df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:]})
+# df_compare['Predicted EC'] = y_pred
 
-#%%
-plt.figure(figsize=(16,8))
-plt.title('Displays Actual EC vs. Predicted EC.')
-plt.xlabel('Date')
-plt.ylabel('Value')
-plt.plot(df_compare['Actual EC'], label='Actual')
-plt.plot(df_compare['Predicted EC'], label='Predicted')
-plt.legend()
-plt.show()
+# #%%
+# plt.figure(figsize=(16,8))
+# plt.title('Displays Actual EC vs. Predicted EC.')
+# plt.xlabel('Date')
+# plt.ylabel('Value')
+# plt.plot(df_compare['Actual EC'], label='Actual')
+# plt.plot(df_compare['Predicted EC'], label='Predicted')
+# plt.legend()
+# plt.show()
 
-#%%
-plt.figure(figsize=(16,8))
-plt.title('Displays All Actual EC vs. Predicted EC.')
-plt.xlabel('Date')
-plt.ylabel('Value')
-plt.plot( df['ec_new_.5'], label='All Actual EC')
-plt.plot(df_compare['Predicted EC'], label='Predicted')
-plt.legend()
-plt.show()
+# #%%
+# plt.figure(figsize=(16,8))
+# plt.title('Displays All Actual EC vs. Predicted EC.')
+# plt.xlabel('Date')
+# plt.ylabel('Value')
+# plt.plot(df['ec_new_.5'], label='All Actual EC')
+# plt.plot(df_compare['Predicted EC'], label='Predicted')
+# plt.legend()
+# plt.show()
 
 #%%
 # =============================================================================
@@ -462,6 +459,38 @@ y_pred = np.reshape(y_pred, (y_pred.shape[0], 1))
 
 #%%
 y_test = np.reshape(y_test, (y_test.shape[0], y_test.shape[1]))
+
+#%%
+plt.figure(figsize=(16,8))
+plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
+plt.plot(y_test, label='y_test')
+plt.plot(y_pred, label='y_pred')
+plt.legend()
+plt.show()
+
+#%%
+df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:-(n_future-1)]})
+df_compare['Predicted EC'] = y_pred
+
+#%%
+plt.figure(figsize=(16,8))
+plt.title('Displays Actual EC vs. Predicted EC.')
+plt.xlabel('Date')
+plt.ylabel('Value')
+plt.plot(df_compare['Actual EC'], label='Actual')
+plt.plot(df_compare['Predicted EC'], label='Predicted')
+plt.legend()
+plt.show()
+
+#%%
+plt.figure(figsize=(16,8))
+plt.title('Displays All Actual EC vs. Predicted EC.')
+plt.xlabel('Date')
+plt.ylabel('Value')
+plt.plot(df['ec_new_.5'], label='All Actual EC')
+plt.plot(df_compare['Predicted EC'], label='Predicted')
+plt.legend()
+plt.show()
 
 #%%
 from sklearn.metrics import mean_squared_error
