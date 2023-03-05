@@ -20,11 +20,11 @@ function App() {
 
   const [data, setData] = useState({ current: {} });
 
-  const socket = socketIOClient("http://127.0.0.1:5000/hourly");
+  const socket = socketIOClient("http://kmitl.duckdns.org:20001/hourly");
 
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/", {
+    fetch("http://kmitl.duckdns.org:20001/", {
       headers: {
         "Content-Type": "application/json",
       }

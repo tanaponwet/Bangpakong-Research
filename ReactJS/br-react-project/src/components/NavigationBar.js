@@ -28,7 +28,7 @@ function NavigationBar(props) {
                     <figure className='logo-img'>
                         <img src={BlueSaltWater} alt="" />
                     </figure>
-                    <div className='logo-text' class="row">
+                    <div className='logo-text'>
                         <p>Salinity</p>
                         <p>Predictive</p>
                         <p>System</p>
@@ -36,10 +36,10 @@ function NavigationBar(props) {
                     </div>
                 </a>
                 <div className={clickState ? 'menu-con active' : 'menu-con'}>
-                    <a className="menu-link" href='' onClick={closeMobileMenu}>
-                        {/* <HomeRoundedIcon className='menu-icon' /> */}
+                    {/* <a className="menu-link" href='' onClick={closeMobileMenu}>
+                        <HomeRoundedIcon className='menu-icon' />
                         <p className='menu-text'>Home</p>
-                    </a>
+                    </a> */}
                     <div className="theme-con" onClick={switchTheme}>
                         {themeState ? (
                             <LightModeRoundedIcon className='icon' />

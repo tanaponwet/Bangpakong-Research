@@ -57,4 +57,4 @@ if __name__ == '__main__':
         scheduler.add_job(post_hourly, "cron", second="*/10")
         # scheduler.add_job(post_hourly, "cron", hour="*", minute="0", second="0")
         scheduler.start()
-        socketio.run(app, debug=True)
+        socketio.run(app, debug=True, port=20001, host="0.0.0.0")
