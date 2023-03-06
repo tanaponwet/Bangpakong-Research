@@ -32,7 +32,7 @@ scheduler = BackgroundScheduler(executor='gevent')
 
 
 @app.route('/', methods=["GET"])
-@ socketio.on("post_hourly", namespace="/hourly")
+@socketio.on("post_hourly", namespace="/hourly")
 def post_hourly():
     with app.app_context():
         time_now = datetime.datetime.now()
@@ -42,10 +42,22 @@ def post_hourly():
                 "time": time_now.strftime('%H:%M:%S'),
                 "gl": round(random.uniform(1, 20), 2),
                 "uscm": round(random.uniform(1, 20000), 2)
-            }
-
+            },
+            "next_24":[]
         }
+
+        for i in range(1, 24+1):
+            time_in_24h = (time_now + datetime.timedelta(hours=i)).strftime('%H:%M:%S')
+            data_for_next_24h = {
+            "date": time_now.strftime('%a %d-%m-%Y'),
+            "time": time_in_24h,
+            "gl": round(random.uniform(1, 20), 2),
+            "uscm": round(random.uniform(1, 20000), 2)
+            }
+            data["next_24"].append(data_for_next_24h)
+
         data_json = json.dumps(data)
+
         print("Hourly sent:", time_now)
         socketio.emit("post_hourly", data_json,
                       broadcast=True, namespace="/hourly")
