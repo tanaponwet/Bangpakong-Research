@@ -7,7 +7,7 @@ import HourForecastCard from './components/HourForecastCard';
 import Footer from './components/Footer';
 import MapBox from './components/MapBox';
 import socketIOClient from "socket.io-client";
-// import Graph from "./components/Graph";
+import Graph from "./components/Graph";
 
 export const ThemeContext = createContext(null)
 
@@ -18,7 +18,7 @@ function App() {
 
   const [theme, setTheme] = useState('light');
 
-  const [data, setData] = useState({ current: {} });
+  const [data, setData] = useState({ current: {}, next_24: [] });
 
   const socket = socketIOClient("http://kmitl.duckdns.org:20001/hourly");
 
@@ -30,16 +30,17 @@ function App() {
       }
     })
     .then(response => response.json())
-    .then(data => setData(data))
+    .then(data => {
+      // console.log(data.next_24);
+      setData(data);})
   }, []);
 
 
   useEffect(() => {
     socket.on("post_hourly", (data) => {
-      setData(JSON.parse(data));
-      // const parsedData = JSON.parse(data);
-      // console.log("Hourly Data:", parsedData);
-      // setData(parsedData);
+      const parsedData = JSON.parse(data);
+      // console.log(parsedData.next_24);
+      setData(parsedData);
     });
     return () => {
       socket.off("post_hourly");
@@ -63,8 +64,8 @@ function App() {
         <div className="card-list">
           <div className="card-con">
             <CurrentForecast data={data.current} />
-            <HourForecast />
-            {/* <Graph /> */}
+            {data.next_24.length > 0 && <HourForecast data={data.next_24} length={24}/>}
+            {/* <Graph data={data.current}/> */}
             <MapBox />
           </div>
         </div>
