@@ -56,7 +56,7 @@
 }
 
 .card-list {
-  padding: 264px 96px 96px;
+  padding: 100px 96px 96px;
 }
 
 .card-con {
@@ -69,7 +69,7 @@
 
 @media screen and (max-width: 672px) {
   .card-list {
-    padding: 156px 16px 48px;
+    padding: 120px 16px 48px;
   }
 
   .card-con {
