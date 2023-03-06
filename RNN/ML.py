@@ -4,6 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #%%
+import tensorflow as tf
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+#%%
 from matplotlib import rcParams
 rcParams['font.family'] = 'Angsana New'
 rcParams.update({'font.size': 22})
@@ -11,6 +14,7 @@ rcParams['axes.unicode_minus'] = False
 #%%
 # df_read = pd.read_csv('data/corrected_data.csv')
 df_read = pd.read_csv('data/chol-bangkla-corrected-2017-2022-hourly-corrected.csv', parse_dates=["datetime"])
+df_read_original = pd.read_csv('data/chol-bangkla-corrected-2017-2022-hourly.csv', parse_dates=["datetime"])
 
 #%%
 df = df_read.copy()
@@ -34,8 +38,8 @@ plt.subplot(3,1,1)
 plt.title('Displays EC values from 2016 to 2022.')
 plt.xlabel('Date')
 plt.ylabel('EC')
-plt.plot(df['ec'], label='OG ec')
-plt.plot(df['ec_corrected'], label='corrected')
+plt.plot(df_read_original['ec'], label='Original')
+plt.plot(df['ec'], label='Corrected')
 plt.legend()
 
 # plt.subplot(3,1,2)
@@ -67,11 +71,11 @@ plt.legend()
 # กำหนดตัวแปรที่ต้องการใช้ train ตัว model
 # =============================================================================
 
-data = df.filter(['ec_corrected'])
+data = df.filter(['ec'])
 dataset = data.values
 
 #%%
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
 #%%
 # =============================================================================
@@ -104,7 +108,7 @@ dataset_scaled = scaler.transform(dataset)
 
 #%%
 n_future = 24
-n_past = 72
+n_past = 48
 
 #%%
 # import math
@@ -243,9 +247,9 @@ plt.figure(figsize=(16,8))
 plt.title('Displays Train set, Validation set, and Test set.')
 plt.xlabel('Date')
 plt.ylabel('EC')
-plt.plot(df[0:train_set_len]["ec_corrected"], label='Train')
-plt.plot(df[train_set_len - n_past:train_set_len + valid_set_len]["ec_corrected"], label='Validation')
-plt.plot(df[(train_set_len + valid_set_len) - n_past:]["ec_corrected"], label='Test')
+plt.plot(df[0:train_set_len]["ec"], label='Train')
+plt.plot(df[train_set_len - n_past:train_set_len + valid_set_len]["ec"], label='Validation')
+plt.plot(df[(train_set_len + valid_set_len) - n_past:]["ec"], label='Test')
 plt.legend()
 plt.show()
 
@@ -274,9 +278,9 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 # model = Sequential()
-# model.add(SimpleRNN(192, return_sequences=True, input_shape=(n_past,1)))
-# model.add(SimpleRNN(96, return_sequences=True))
-# model.add(SimpleRNN(48, return_sequences=False))
+# model.add(SimpleRNN(192, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
+# # model.add(SimpleRNN(192, return_sequences=True))
+# model.add(SimpleRNN(192, return_sequences=False))
 # model.add(Dense(n_future))
 
 # model.add(SimpleRNN(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
@@ -291,9 +295,9 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # =============================================================================
 
 # model = Sequential()
-# model.add(LSTM(192, return_sequences=True, input_shape=(n_past,1)))
-# model.add(LSTM(96, return_sequences=True))
-# model.add(LSTM(48, return_sequences=False))
+# model.add(LSTM(192, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
+# # model.add(LSTM(192, return_sequences=True))
+# model.add(LSTM(192, return_sequences=False))
 # model.add(Dense(n_future))
 
 # model = Sequential()
@@ -310,8 +314,8 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 model = Sequential()
 model.add(Bidirectional(LSTM(192, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
-model.add(Bidirectional(LSTM(96, return_sequences=True)))
-model.add(Bidirectional(LSTM(48, return_sequences=False)))
+# model.add(Bidirectional(LSTM(96, return_sequences=True)))
+model.add(Bidirectional(LSTM(192, return_sequences=False)))
 model.add(Dense(n_future))
 
 # model.add(Dense(16))
@@ -322,10 +326,10 @@ model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse'])
 model.summary()
 
 #%%
-early_stopping_callback = EarlyStopping(monitor='val_loss', patience=5)
+early_stopping_callback = EarlyStopping(monitor='val_loss', patience=20)
 
 #%%
-checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1-test.h5'
+checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1.h5'
 model_checkpoint_callback = ModelCheckpoint(
     filepath=checkpoint_filepath,
     monitor='val_loss',
@@ -347,7 +351,7 @@ model_fit = model.fit(
 
 #%%
 plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM: loss rate 0-1 scale 24-output train-val-test: 3-2-1')
+plt.title('Bi-LSTM: loss rate, 0-1 MinMaxScale, 24-output train-val-test: 3-2-1')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.plot(model_fit.history['loss'], label='Training loss')
@@ -387,19 +391,6 @@ plt.show()
 # rmspe = (np.sqrt(np.mean(np.square((y_test - y_pred) / y_test)))) * 100
 # print(f'RMSPE of Bi-LSTM = {rmspe}')
 
-# #%%
-# from sklearn.metrics import mean_absolute_percentage_error
-
-# # calculate MAPE
-# mape = mean_absolute_percentage_error(y_test, y_pred)
-# print(f'MAPE of Bi-LSTM = {mape}')
-# #%%
-# plt.figure(figsize=(16,8))
-# plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
-# plt.plot(y_test, label='y_test')
-# plt.plot(y_pred, label='y_pred')
-# plt.legend()
-# plt.show()
 
 # #%%
 # df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:]})
@@ -461,12 +452,29 @@ y_pred = np.reshape(y_pred, (y_pred.shape[0], 1))
 y_test = np.reshape(y_test, (y_test.shape[0], y_test.shape[1]))
 
 #%%
+y_real = y_test[:,0]
+y_real = np.reshape(y_real, (y_real.shape[0], 1))
+
+#%%
 plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM 0-1 scale train-val-test:3-2-1')
-plt.plot(y_test, label='y_test')
+plt.title('Bi-LSTM 0-1 scale train-val-test: 3-2-1')
+plt.plot(y_real, label='y_real')
 plt.plot(y_pred, label='y_pred')
 plt.legend()
 plt.show()
+
+#%%
+from sklearn.metrics import mean_squared_error
+
+rmse = mean_squared_error(y_test, rpred, squared=False)
+print("RMSE of Bi-LSTM =",rmse)
+
+#%%
+from sklearn.metrics import mean_absolute_percentage_error
+
+# calculate MAPE
+mape = mean_absolute_percentage_error(y_test, rpred)
+print(f'MAPE of Bi-LSTM = {mape}')
 
 #%%
 df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:-(n_future-1)]})
@@ -492,11 +500,7 @@ plt.plot(df_compare['Predicted EC'], label='Predicted')
 plt.legend()
 plt.show()
 
-#%%
-from sklearn.metrics import mean_squared_error
 
-rmse = mean_squared_error(y_test, rpred, squared=False)
-print(rmse)            
 
 #%%
 # =============================================================================
