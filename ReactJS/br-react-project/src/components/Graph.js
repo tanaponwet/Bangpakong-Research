@@ -15,7 +15,8 @@ function Graph (props) {
                 </div>
             </div>
                 <div className="graph-con">
-                    <SimpleLineChart data={props}/>
+                    {/* <SimpleLineChart /> */}
+                    <SimpleLineChart data={props.data}/>
                 </div>
             </main>
         )

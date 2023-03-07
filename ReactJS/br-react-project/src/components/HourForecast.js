@@ -6,7 +6,7 @@ import HourForecastCard from './HourForecastCard';
 function HourForecast(props) {
     const {data, length} = props;
 
-    console.log("HourForecast data:", data);
+    // console.log("HourForecast data:", data);
 
     const cardElements = Array.from({ length: length }, (_, i) => (
         <HourForecastCard key={i} data={data[i]}/>
@@ -24,7 +24,6 @@ function HourForecast(props) {
             <div className="item-list">
                 <div className="item-con">
                     {cardElements}
-                    {/* <HourForecastCard /> */}
                 </div>
             </div>
         </main>

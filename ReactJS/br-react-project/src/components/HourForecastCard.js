@@ -10,14 +10,14 @@ function roundTo(n, place) {
 
 function mapImg(value) {
     const roundedValue = roundTo(value, 2);
-    if (roundedValue <= .25){
-        return BlueSaltWater;
+    if (roundedValue > 2.0){
+        return RedSaltWater;
     }
-    else if(roundedValue <= 2){
+    else if(roundedValue > .5){
         return YellowSaltWater;
     }
     else{
-        return RedSaltWater;
+        return BlueSaltWater;
     }
 }
 

@@ -69,17 +69,17 @@ export default class SimpleLineChart extends PureComponent {
           margin={{
             top: 5,
             right: 30,
-            left: 5,
+            left: 0,
             bottom: 5,
           }}
         >
           {/* <CartesianGrid strokeDasharray="3 3" /> */}
-          <XAxis dataKey="name" />
+          <XAxis dataKey={"time"} />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="uscm" stroke="#1389FF" name='กรมชลประทาน'/>
-          <Line type="monotone" dataKey="uscm" stroke="#82ca9d" name='เครื่องวัด'/>
+          <Line type="monotone" dataKey="bangkla" stroke="#1389FF" name='ชลประทาน'/>
+          <Line type="monotone" dataKey="meter" stroke="#82ca9d" name='วัดคลองเขื่อน'/>
         </LineChart>
       </ResponsiveContainer>
     );

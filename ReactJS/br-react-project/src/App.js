@@ -18,7 +18,7 @@ function App() {
 
   const [theme, setTheme] = useState('light');
 
-  const [data, setData] = useState({ current: {}, next_24: [] });
+  const [data, setData] = useState({ current: {}, next_24: [], comp_chol_meter:[] });
 
   const socket = socketIOClient("http://kmitl.duckdns.org:20001/hourly");
 
@@ -64,8 +64,8 @@ function App() {
         <div className="card-list">
           <div className="card-con">
             <CurrentForecast data={data.current} />
-            {data.next_24.length > 0 && <HourForecast data={data.next_24} length={24}/>}
-            {/* <Graph data={data.current}/> */}
+            {data.next_24.length > 0 && <HourForecast data={data.next_24} length={data.next_24.length}/>}
+            {data.comp_chol_meter.length > 0 && <Graph data={data.comp_chol_meter}/>}
             <MapBox />
           </div>
         </div>
