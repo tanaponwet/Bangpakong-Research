@@ -67,8 +67,8 @@ plt.legend()
 # plt.legend()
 
 #%%
-print(df["ec"].min())
-print(df["ec"].max())
+# print(df["ec"].min())
+# print(df["ec"].max())
 
 #%%
 # =============================================================================
@@ -298,11 +298,11 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # LSTM
 # =============================================================================
 
-# model = Sequential()
-# model.add(LSTM(192, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
-# # model.add(LSTM(192, return_sequences=True))
-# model.add(LSTM(192, return_sequences=False))
-# model.add(Dense(n_future))
+model = Sequential()
+model.add(LSTM(192, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
+# model.add(LSTM(192, return_sequences=True))
+model.add(LSTM(192, return_sequences=False))
+model.add(Dense(n_future))
 
 # model = Sequential()
 # model.add(LSTM(128, return_sequences=True, input_shape=(x_train.shape[1],x_train.shape[2])))
@@ -316,11 +316,11 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 # Bidirectional LSTM
 # =============================================================================
 
-model = Sequential()
-model.add(Bidirectional(LSTM(192, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
-# model.add(Bidirectional(LSTM(96, return_sequences=True)))
-model.add(Bidirectional(LSTM(192, return_sequences=False)))
-model.add(Dense(n_future))
+# model = Sequential()
+# model.add(Bidirectional(LSTM(192, return_sequences=True), input_shape=(x_train.shape[1],x_train.shape[2])))
+# # model.add(Bidirectional(LSTM(96, return_sequences=True)))
+# model.add(Bidirectional(LSTM(192, return_sequences=False)))
+# model.add(Dense(n_future))
 
 # model.add(Dense(16))
 # model.add(Dense(1))
@@ -333,7 +333,7 @@ model.summary()
 early_stopping_callback = EarlyStopping(monitor='val_loss', patience=20)
 
 #%%
-checkpoint_filepath = 'checkpoint/01-bilstm-24-3-2-1.h5'
+checkpoint_filepath = 'checkpoint/01-lstm-24-3-2-1-retrain.h5'
 model_checkpoint_callback = ModelCheckpoint(
     filepath=checkpoint_filepath,
     monitor='val_loss',
@@ -355,13 +355,14 @@ model_fit = model.fit(
 
 #%%
 plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM: loss rate, 0-1 MinMaxScale, 24-output train-val-test: 3-2-1')
+plt.title('LSTM: loss rate, 0-1 MinMaxScale, 24-output train-val-test: 3-2-1')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.plot(model_fit.history['loss'], label='Training loss')
 plt.plot(model_fit.history['val_loss'], label='Validation loss')
 plt.legend()
 plt.show()
+
 
 # #%%
 # from keras.models import load_model
@@ -428,7 +429,9 @@ plt.show()
 #%%
 from keras.models import load_model
 
-model = load_model('checkpoint/01-bilstm-24-3-2-1.h5')
+model = load_model('checkpoint/01-lstm-24-3-2-1-retrain.h5')
+
+#%%
 
 #%%
 pred = model.predict(x_test)
@@ -471,14 +474,14 @@ plt.show()
 from sklearn.metrics import mean_squared_error
 
 rmse = mean_squared_error(y_test, rpred, squared=False)
-print("RMSE of Bi-LSTM =",rmse)
+print("RMSE of LSTM =",rmse)
 
 #%%
 from sklearn.metrics import mean_absolute_percentage_error
 
 # calculate MAPE
 mape = mean_absolute_percentage_error(y_test, rpred)
-print(f'MAPE of Bi-LSTM = {mape}')
+print(f'MAPE of LSTM = {mape}')
 
 #%%
 df_compare = pd.DataFrame({'Actual EC':df['ec_corrected'][train_set_len + valid_set_len:-(n_future-1)]})
