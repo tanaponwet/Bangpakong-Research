@@ -1,12 +1,26 @@
 import React from 'react'
 import '../styles/HourForecastCard.css'
 import BlueSaltWater from '../icons/salt-water/03/blue-salt-water.png'
-// import YellowSaltWater from '../icons/salt-water/03/yellow-salt-water.png'
-// import RedSaltWater from '../icons/salt-water/03/red-salt-water.png'
+import YellowSaltWater from '../icons/salt-water/03/yellow-salt-water.png'
+import RedSaltWater from '../icons/salt-water/03/red-salt-water.png'
 
-function mapImg() {
-    return BlueSaltWater;
+function roundTo(n, place) {    
+    return +(Math.round(n + "e+" + place) + "e-" + place);
 }
+
+function mapImg(value) {
+    const roundedValue = roundTo(value, 2);
+    if (roundedValue <= .25){
+        return BlueSaltWater;
+    }
+    else if(roundedValue <= 2){
+        return YellowSaltWater;
+    }
+    else{
+        return RedSaltWater;
+    }
+}
+
 function HourForecastCard(props) {
     const {data} = props;
     return (
@@ -15,8 +29,8 @@ function HourForecastCard(props) {
             <p className='date-text'>{data.date}</p>
             <p className='time-text'>{data.time}</p>
             <figure className="img-con">
-                <img src={BlueSaltWater} alt="" />
-                {/* <img src={mapImg} alt="" /> */}
+                {/* <img src={BlueSaltWater} alt="" /> */}
+                <img src={mapImg(data.gl)} alt="" />
             </figure>
             <div className="salinity-info">
                 <p className='salinity-value'>{data.gl}</p>

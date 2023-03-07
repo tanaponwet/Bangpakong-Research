@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import '../styles/CurrentForecast.css'
 import BlueSaltWater from '../icons/salt-water/03/blue-salt-water.png'
-// import YellowSaltWater from '../icons/salt-water/03/yellow-salt-water.png'
-// import RedSaltWater from '../icons/salt-water/03/red-salt-water.png'
+import YellowSaltWater from '../icons/salt-water/03/yellow-salt-water.png'
+import RedSaltWater from '../icons/salt-water/03/red-salt-water.png'
 import HomeWorkRoundedIcon from '@mui/icons-material/HomeWorkRounded';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import WaterRoundedIcon from '@mui/icons-material/WaterRounded';
@@ -11,6 +11,23 @@ import OpacityRoundedIcon from '@mui/icons-material/OpacityRounded';
 import ElectricBoltRoundedIcon from '@mui/icons-material/ElectricBoltRounded';
 import WatchLaterRoundedIcon from '@mui/icons-material/WatchLaterRounded';
 import { HourglassEmpty } from '@mui/icons-material';
+
+function roundTo(n, place) {    
+    return +(Math.round(n + "e+" + place) + "e-" + place);
+}
+
+function mapImg(value) {
+    const roundedValue = roundTo(value, 2);
+    if (roundedValue <= .25){
+        return BlueSaltWater;
+    }
+    else if(roundedValue <= 2){
+        return YellowSaltWater;
+    }
+    else{
+        return RedSaltWater;
+    }
+}
 
 function CurrentForecast(props) {
     const {data} = props; //same as -> const data = props.data;
@@ -66,7 +83,9 @@ function CurrentForecast(props) {
                 </div>
 
                 <figure className="img-con">
-                    <img src={BlueSaltWater} alt="" />
+                    {/* <img src={BlueSaltWater} alt="" /> */}
+                    <img src={mapImg(data.gl)} alt="" />
+
                 </figure>
             </div>
             <div className="footer">
