@@ -16,19 +16,21 @@ socketio = SocketIO(app=app, cors_allowed_origins='*',
                     logger=True, engineio_logger=True)
 scheduler = BackgroundScheduler(executor='gevent')
 
+def read_from_meter(time_now):
+    date_file = time_now.strftime("%Y%m%d")
+    time_file = int(time_now.strftime("%H%M"))
+    text = open(r'C:\Users\Administrator\Documents\GET\from-meter\meter-{}-{:04d}10.json'.format(date_file, time_file))
+    data_from_meter = json.load(text)
 
-# @app.route('/', methods=["GET"])
-# def send_first():
-#     with app.app_context():
-#         time_now = datetime.datetime.now()
-#         data = {   
-#             "current": {
-#                     "date": "999",
-#                     "time": "99:99",
-#                     "gl": 112,
-#                     "uscm": 11200
-#         }}
-#         return jsonify(data)
+    uscm = data_from_meter["Sensor"]["EC"] * 1000
+
+    data = {
+            "date": time_now.strftime('%a %d-%m-%Y'),
+            "time": time_now.strftime('%H:%M:00'),
+            "uscm": uscm,
+            "gl": round(uscm * .55 / 1000,2)
+        }
+    return data
 
 
 @app.route('/', methods=["GET"])
@@ -37,14 +39,12 @@ def post_hourly():
     with app.app_context():
         time_now = datetime.datetime.now()
         data = {
-            "current": {
-                "date": time_now.strftime('%a %d-%m-%Y'),
-                "time": time_now.strftime('%H:%M:%S'),
-                "gl": round(random.uniform(1, 20), 2),
-                "uscm": round(random.uniform(1, 20000), 2)
-            },
-            "next_24":[]
+            "current": {},
+            "next_24":[],
+            "comp_chol_meter":[]
         }
+
+        data["current"] = read_from_meter(time_now)
 
         for i in range(1, 24+1):
             time_in_24h = (time_now + datetime.timedelta(hours=i)).strftime('%H:%M:%S')
@@ -66,7 +66,8 @@ def post_hourly():
 
 if __name__ == '__main__':
     with app.app_context():
-        scheduler.add_job(post_hourly, "cron", second="*/10")
-        # scheduler.add_job(post_hourly, "cron", hour="*", minute="0", second="0")
+        # scheduler.add_job(post_hourly, "cron", second="*/10")
+        scheduler.add_job(post_hourly, "cron", minute="*", second="15")
+        # scheduler.add_job(post_hourly, "cron", hour="*", minute="6", second="10")
         scheduler.start()
         socketio.run(app, debug=True, port=20001, host="0.0.0.0")
