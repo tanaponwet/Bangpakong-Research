@@ -29,6 +29,7 @@ function mapImg(value) {
     }
 }
 
+
 function CurrentForecast(props) {
     const {data} = props; //same as -> const data = props.data;
     // console.log("Data in CurrentForecast:", data);

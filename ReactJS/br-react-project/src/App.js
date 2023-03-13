@@ -12,6 +12,23 @@ import Graph from "./components/Graph";
 export const ThemeContext = createContext(null)
 
 
+const textBangklaMeter = "เปรียบเทียบค่าความเค็ม (g/l) ระหว่าง เครื่องวัด กับ กรมชลประทาน 24 ชม. ที่ผ่านมา";
+const styleBangklaMeter = [
+    {
+      name: "กรมชลประทาน",
+      type: "monotone",
+      dataKey: "bangkla",
+      color: "#1389FF", 
+      linename: 'ชลประทาน'
+    },
+    {
+      name: "meter",
+      type: "monotone",
+      dataKey: "meter",
+      color: "#82ca9d", 
+      linename: 'วัดคลองเขื่อน'
+    }
+];
 
 
 function App() {
@@ -65,7 +82,7 @@ function App() {
           <div className="card-con">
             <CurrentForecast data={data.current} />
             {data.next_24.length > 0 && <HourForecast data={data.next_24} length={data.next_24.length}/>}
-            {data.comp_chol_meter.length > 0 && <Graph data={data.comp_chol_meter}/>}
+            {data.comp_chol_meter.length > 0 && <Graph data={data.comp_chol_meter} text={textBangklaMeter} graph={styleBangklaMeter} />}
             <MapBox />
           </div>
         </div>
