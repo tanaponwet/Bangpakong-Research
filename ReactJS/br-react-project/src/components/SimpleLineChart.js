@@ -18,7 +18,7 @@ export default class SimpleLineChart extends PureComponent {
   render() {
     // console.log(this.state.graph);
     const lines = this.state.graph.map((line,index) => (
-      <Line key={index} type={line.type} dataKey={line.dataKey} stroke={line.color} name={line.linemane} />
+      <Line key={index} type={line.type} dataKey={line.dataKey} stroke={line.color} name={line.linename} />
     ));
 
 
