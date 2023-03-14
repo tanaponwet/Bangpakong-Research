@@ -464,7 +464,7 @@ y_real = np.reshape(y_real, (y_real.shape[0], 1))
 
 #%%
 plt.figure(figsize=(16,8))
-plt.title('Bi-LSTM 0-1 scale train-val-test: 3-2-1')
+plt.title('LSTM 0-1 scale train-val-test: 3-2-1')
 plt.plot(y_real, label='y_real')
 plt.plot(y_pred, label='y_pred')
 plt.legend()
